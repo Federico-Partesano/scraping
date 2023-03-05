@@ -1,0 +1,18 @@
+.custom__button {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 14px;
+  display: inline-block;
+  border: 2px solid #f9ab00;
+  border-radius: 6px;
+  padding: 8px 24px;
+  transition: 0.4s;
+  transition-property: color, background-color, border-color, opacity;
+  cursor: pointer;
+  &:hover {
+    background-color: rgba(249, 171, 0, 0.05);
+  }
+}

@@ -1,0 +1,56 @@
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+td,
+th,
+p {
+  font-family: "Source Sans Pro", sans-serif;
+  color: white;
+}
+
+.main__container {
+  background-color: #1a1920;
+  width: 100vw;
+  height: calc(100vh - 97px);
+  position: absolute;
+  top: 97px;
+  left: 0px;
+  overflow: auto;
+}
+
+* {
+  &::-webkit-scrollbar {
+    width: 3px;
+    background-color: red;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #f9ab00;
+    border-radius: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: #1a191f;
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}

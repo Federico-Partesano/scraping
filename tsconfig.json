@@ -17,9 +17,15 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "declaration": false,
     "noEmit": true,
     "jsx": "react-jsx"
   },
+  "references": [
+    {
+      "path": "./electron/tsconfig.json"
+    }
+  ],
   "include": [
     "src"
   ]

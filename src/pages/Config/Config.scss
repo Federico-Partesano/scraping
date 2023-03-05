@@ -1,0 +1,26 @@
+.config__container {
+  .card {
+    border-radius: 4px;
+    padding: 20px;
+    background-color: #222028;
+    .title {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 26px;
+      text-align: left;
+    }
+
+    .description {
+      font-size: 16px;
+      color: #fff;
+      font-weight: 400;
+      text-align: left;
+      padding-top: 14px;
+    }
+
+    .folder {
+        text-align: left;
+        
+    }
+  }
+}

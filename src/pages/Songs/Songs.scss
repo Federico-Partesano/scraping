@@ -1,0 +1,145 @@
+svg {
+  --rm-audio-player-sortable-list-button-active: #f9ab00 !important;
+}
+
+.container__songs {
+  display: flex;
+  flex-direction: column;
+
+  .songs__search__input {
+    margin-top: 0px !important;
+    width: 50% !important;
+    background-color: #222028 !important;
+    color: #c8c7c9 !important;
+
+    font-family: "Source Sans Pro", sans-serif;
+    &:focus {
+      border-color: #f9ab00 !important;
+      border-width: 2px !important;
+      box-shadow: none !important;
+    }
+  }
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: 54px 1fr 100px; /* definiamo tre colonne con larghezze differenti */
+
+    .border-bottom-header {
+      border-bottom: 1px solid hsla(0, 0%, 100%, 0.1);
+    }
+
+    .image {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      object-position: center;
+    }
+  }
+  .selected {
+    background-color: #2f2b37;
+  }
+
+  .grid-item {
+    color: #b3b3b3;
+    height: 56px;
+    transition: background-color 0.3s linear;
+    .duration {
+      font-size: 14px;
+      color: hsla(0, 0%, 100%, 0.7);
+    }
+
+    .unfavorite {
+      path {
+        transition: fill .12s linear;
+        fill: hsla(0, 0%, 100%, 0.7);
+      }
+      &:hover path {
+        fill: white;
+      }
+    }
+  }
+
+  .footer {
+    width: 100%;
+    height: 52px;
+  }
+  .table__container {
+    width: 100%;
+    padding: 18px;
+    flex: 1;
+    .songs {
+      height: calc(100vh - 284px);
+      overflow-y: auto;
+      background-color: #222028;
+      border-radius: 4px;
+      .counter__songs {
+        color: hsla(0, 0%, 100%, 0.7);
+        text-align: start;
+        padding-top: 12px;
+        padding-left: 12px;
+      }
+    }
+    .header {
+      text-align: start;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(65, 65, 65, 0.519);
+      margin-bottom: 16px;
+      .index__section {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 50px;
+      }
+    }
+    .index__section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 50px;
+      .play__svg {
+        display: none;
+      }
+      .index {
+        display: inline;
+      }
+    }
+    .song {
+      height: 54px;
+      border-radius: 4px;
+      cursor: pointer;
+      &__selected {
+        background-color: hsla(0, 0%, 100%, 0.1);
+      }
+      &:hover {
+        background-color: hsla(0, 0%, 100%, 0.1);
+        &:hover {
+          .play__svg {
+            display: inline;
+          }
+          .index {
+            display: none;
+          }
+        }
+      }
+    }
+    .table {
+      height: min-content;
+    }
+  }
+}
+
+.ldXqPU .track-current-time {
+  color: #f9ab00 !important;
+}
+
+.dgtVZw .rm-player-progress-handle {
+  background-color: #f9ab00 !important;
+}
+
+.dgtVZw .rm-player-progress {
+  background-color: #f9ab00 !important;
+}
+
+.chakra-modal__close-btn {
+  color: white;
+}

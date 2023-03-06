@@ -1,9 +1,8 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, MemoryRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import { ChakraProvider, extendTheme, ThemeConfig } from "@chakra-ui/react";
-import socketIOClient from "socket.io-client";
 import Header from "./components/Header/Header";
 import SingleVideo from "./pages/SingleVideo/SingleVideo";
 import Loader from "./components/Loader/Loader";
@@ -21,7 +20,6 @@ const config: ThemeConfig = {
 // 3. extend the theme
 const theme = extendTheme({ config });
 
-export let socketConnection: ReturnType<typeof socketIOClient> | null = null;
 function App() {
   const dispatch = useDispatch();
   const [isReady, setIsReady] = useState(false);
@@ -55,21 +53,21 @@ function App() {
   if (!selectedFolder) return <SelectFolder />;
 
   return (
-    <BrowserRouter>
+    <MemoryRouter>
       <ChakraProvider theme={theme}>
         <div className="App">
           <Routes>
             <Route path="/" element={<Header />}>
               <Route path="home" element={<Home />} />
               <Route path="/" element={<Home />} />
-              <Route path="/single-video" element={<SingleVideo />} />
-              <Route path="/songs" element={<Songs />} />
-              <Route path="/config" element={<Config />} />
+              <Route path="single-video" element={<SingleVideo />} />
+              <Route path="songs" element={<Songs />} />
+              <Route path="config" element={<Config />} />
             </Route>
           </Routes>
         </div>
       </ChakraProvider>
-    </BrowserRouter>
+    </MemoryRouter>
   );
 }
 

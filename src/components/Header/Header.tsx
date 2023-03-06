@@ -9,7 +9,7 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const Links = [
   { label: "Cerca", link: "/home" },
@@ -17,8 +17,9 @@ const Links = [
   { label: "Impostazioni", link: "/config" },
 ];
 
-const NavLink = ({ children, href }: { children: ReactNode; href: string }) => (
-  <Link
+const NavLink = ({ children, href }: { children: ReactNode; href: string }) => {
+  const navigate = useNavigate();
+  return <Link
     px={2}
     py={1}
     rounded={"md"}
@@ -26,11 +27,15 @@ const NavLink = ({ children, href }: { children: ReactNode; href: string }) => (
       textDecoration: "none",
       color: "#f9ab00",
     }}
+    onClick={(e) => {
+      e.preventDefault();
+      navigate(href)
+    }}
     href={href}
   >
     {children}
   </Link>
-);
+};
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure();

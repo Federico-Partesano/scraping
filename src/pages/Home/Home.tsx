@@ -40,7 +40,7 @@ const Home: FC<IHome> = () => {
       <Input
         value={inputValue}
         onChange={({ target: { value } }) => setInputValue(value)}
-        onKeyDown={({ key, target: { value } }) => {
+        onKeyDown={({ key, target: { value } }: any) => {
           key === "Enter" && value && fetchSearch(value);
         }}
         className="home__search__input"

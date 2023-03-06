@@ -50,10 +50,6 @@ const SingleVideo: FC<ISingleVideo> = () => {
     (window as any).api.receive(
       "percentualDownload",
       (percentual: "error" | number) => {
-        console.log(
-          "🚀 ~ file: SingleVideo.tsx:48 ~ useEffect ~ percentual:",
-          percentual
-        );
         percentual !== "error" && setPercentualDownload(percentual);
       }
     );

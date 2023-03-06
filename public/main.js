@@ -14,9 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = __importDefault(require("path"));
 const electron_1 = require("electron");
-const electron_is_dev_1 = __importDefault(require("electron-is-dev"));
 const electron_store_1 = __importDefault(require("electron-store"));
-const youtube_dl_exec_1 = __importDefault(require("youtube-dl-exec"));
 const fs_1 = __importDefault(require("fs"));
 const url_1 = __importDefault(require("url"));
 const filemp3_1 = require("./filemp3");
@@ -24,9 +22,9 @@ const functions_1 = require("./functions");
 const typings_1 = require("./typings");
 const ffmpeg_1 = __importDefault(require("@ffmpeg-installer/ffmpeg"));
 const fluent_ffmpeg_1 = __importDefault(require("fluent-ffmpeg"));
+const ytdl_core_1 = __importDefault(require("ytdl-core"));
 fluent_ffmpeg_1.default.setFfmpegPath(ffmpeg_1.default.path);
-const store = new electron_store_1.default();
-(0, functions_1.setInitialStatesElecttron)(store);
+let store = undefined;
 let statusServer = "await";
 const setStatusServer = (newStatus) => (statusServer = newStatus);
 const youtubesearchapi = require("youtube-search-api");
@@ -43,83 +41,47 @@ let currentAudioSong = undefined;
 //   return ffmpegInstance;
 // }
 // getFFmpeg();
-const checkFileName = (name, filesize) => __awaiter(void 0, void 0, void 0, function* () {
-    let fileCreated = false;
-    let percentual = 0;
-    const interval = setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-        if (yield fs_1.default.existsSync(`${name}.part`)) {
-            fileCreated = true;
-            const stats = fs_1.default.statSync(`${name}.part`);
-            let newPercentual = Math.floor((stats.size / filesize) * 100);
-            if (percentual !== newPercentual) {
-                win === null || win === void 0 ? void 0 : win.webContents.send("percentualDownload", newPercentual);
-                percentual = newPercentual;
-            }
-        }
-        else {
-            if (fileCreated) {
-                win === null || win === void 0 ? void 0 : win.webContents.send("percentualDownload", 100);
-                clearInterval(interval);
-            }
-        }
-    }), 800);
-});
 const startDownload = (getFileName, videoId, title) => __awaiter(void 0, void 0, void 0, function* () {
     return new Promise((resolve, eject) => __awaiter(void 0, void 0, void 0, function* () {
-        const format = (yield (0, youtube_dl_exec_1.default)(`https://www.youtube.com/watch?v=${videoId}`, { getFormat: true, format: "mp4" }));
-        const info = yield (0, youtube_dl_exec_1.default)(`https://www.youtube.com/watch?v=${videoId}`, {
-            dumpSingleJson: true,
-            format: "mp4",
+        const url = `https://www.youtube.com/watch?v=${videoId}`;
+        const video = (0, ytdl_core_1.default)(url, { filter: "audioandvideo" });
+        let duration = 0;
+        let author = undefined;
+        let channelId = undefined;
+        video.on("info", (info) => {
+            var _a, _b, _c, _d;
+            duration = (_b = (_a = info === null || info === void 0 ? void 0 : info.videoDetails) === null || _a === void 0 ? void 0 : _a.lengthSeconds) !== null && _b !== void 0 ? _b : 0;
+            author = (_c = info === null || info === void 0 ? void 0 : info.videoDetails) === null || _c === void 0 ? void 0 : _c.author;
+            channelId = (_d = info === null || info === void 0 ? void 0 : info.videoDetails) === null || _d === void 0 ? void 0 : _d.channelId;
         });
-        const size = info.formats.find(({ format: formatVideo }) => formatVideo === format);
-        const sizeFile = (size === null || size === void 0 ? void 0 : size.filesize) || (size === null || size === void 0 ? void 0 : size.filesize_approx);
-        const folder = store.get("folder");
-        size && checkFileName(getFileName, sizeFile);
-        yield (0, youtube_dl_exec_1.default)(`https://www.youtube.com/watch?v=${videoId}`, {
-            format: "mp4",
+        video.on("progress", (chunkLength, downloaded, total) => {
+            const percent = Math.round((downloaded / total) * 100);
+            win === null || win === void 0 ? void 0 : win.webContents.send("percentualDownload", percent);
         });
-        if (!fs_1.default.existsSync(getFileName))
-            eject(undefined);
-        fs_1.default.renameSync(getFileName, `video.mp4`);
-        setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-            const fileName = getFileName.split(".");
-            fileName.pop();
-            fileName.join("");
-            const config = JSON.stringify({ id: videoId, duration: info.duration });
-            (0, fluent_ffmpeg_1.default)("video.mp4")
-                .toFormat("mp3")
-                .output(`${folder}/${title}.mp3`)
-                .outputOption("-id3v2_version 3")
-                .outputOption(`-metadata TXXX=${config}`)
-                .on("end", () => {
-                win === null || win === void 0 ? void 0 : win.webContents.send("downloadSong", "await");
-                fs_1.default.unlinkSync(`video.mp4`);
+        video.pipe(fs_1.default.createWriteStream("video.mp4")).on("finish", () => {
+            win === null || win === void 0 ? void 0 : win.webContents.send("percentualDownload", 100);
+            const folder = store.get("folder");
+            setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+                const config = JSON.stringify({ id: videoId, duration, author, channelId });
+                (0, fluent_ffmpeg_1.default)("video.mp4")
+                    .toFormat("mp3")
+                    .output(`${folder}/${title}.mp3`)
+                    .outputOption("-id3v2_version 3")
+                    .outputOption(`-metadata TXXX=${config}`)
+                    .on("end", () => {
+                    win === null || win === void 0 ? void 0 : win.webContents.send("downloadSong", "await");
+                    fs_1.default.unlinkSync(`video.mp4`);
+                    resolve(0);
+                })
+                    .on("error", (err) => {
+                    console.log("Conversion error:", err);
+                    eject("error");
+                })
+                    .run();
+                setStatusServer("await");
                 resolve(0);
-            })
-                .on("error", (err) => {
-                console.log("Conversion error:", err);
-                eject("rrror");
-            })
-                .run();
-            // const ffmpeg = await getFFmpeg();
-            // await ffmpeg.FS("writeFile", `video.mp4`, await fetchFile(`video.mp4`));
-            // await ffmpeg.run("-i", `video.mp4`, `${getFileName}.mp3`);
-            // // const fileName = getFileName.split(".");
-            // fileName.pop();
-            // fileName.join("");
-            // await fs.promises.writeFile(
-            //   `${folder}/${fileName}.mp3`,
-            //   ffmpeg.FS("readFile", `${getFileName}.mp3`)
-            // );
-            // setTimeout(() => {
-            //   win?.webContents.send("downloadSong", "await");
-            //   // const mp3Data = fs.readFileSync(`${folder}/${fileName}.mp3`);
-            //   fs.unlinkSync(`video.mp4`);
-            //   // fs.renameSync(`${folder}/${fileName}.mp3`, `${folder}/${title}.mp3`);
-            // }, 500);
-            setStatusServer("await");
-            resolve(0);
-        }), 500);
+            }), 500);
+        });
     }));
 });
 function createWindow() {
@@ -132,17 +94,17 @@ function createWindow() {
             contextIsolation: true,
             preload: path_1.default.join(__dirname, "preload.js"),
             webSecurity: false,
+            javascript: true,
         },
     });
+    store = new electron_store_1.default();
+    (0, functions_1.setInitialStatesElecttron)(store);
     // and load the index.html of the app.
     // win.loadFile("index.html");
-    win.loadURL(electron_is_dev_1.default
-        ? "http://localhost:3000"
-        : `file://${path_1.default.join(__dirname, "../build/index.html")}`);
+    // win.loadURL("http://localhost:3000");
+    win.loadURL(`file://${path_1.default.join(__dirname, "index.html")}`);
     // Open the DevTools.
-    if (electron_is_dev_1.default) {
-        win.webContents.openDevTools({ mode: "detach" });
-    }
+    // win.webContents.openDevTools({ mode: "detach" });
 }
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -197,8 +159,7 @@ electron_1.ipcMain.on("getFolderSongs", () => {
 electron_1.ipcMain.on("downloadSong", (event, { videoId, title }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         win === null || win === void 0 ? void 0 : win.webContents.send("downloadSong", "downloading");
-        const getFileName = (yield (0, youtube_dl_exec_1.default)(`https://www.youtube.com/watch?v=${videoId}`, { getFilename: true, format: "mp4" }));
-        yield startDownload(getFileName, videoId, title);
+        yield startDownload("", videoId, title);
     }
     catch (error) {
         console.error("error", error);
@@ -255,7 +216,6 @@ electron_1.ipcMain.on("deleteFavorite", (event, songId) => __awaiter(void 0, voi
     try {
         const favoriteSongs = [...store.get(typings_1.KEYS_STORE.FAVORITE_SONGS)];
         const findIndexSong = favoriteSongs.findIndex((song) => song === songId);
-        console.log("🚀 ~ file: electron.ts:277 ~ ipcMain.on ~ findIndexSong:", findIndexSong);
         if (findIndexSong <= -1)
             return favoriteSongs;
         const newArray = [
@@ -270,11 +230,20 @@ electron_1.ipcMain.on("deleteFavorite", (event, songId) => __awaiter(void 0, voi
         win === null || win === void 0 ? void 0 : win.webContents.send("deleteFavorite", "error");
     }
 }));
-electron_1.ipcMain.on("removeSong", (event, songName) => __awaiter(void 0, void 0, void 0, function* () {
+electron_1.ipcMain.on("removeSong", (event, { name, id }) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const folder = store.get("folder");
-        fs_1.default.unlinkSync(`${folder}/${songName}.mp3`);
-        win === null || win === void 0 ? void 0 : win.webContents.send("removeSong", songName);
+        fs_1.default.unlinkSync(`${folder}/${name}.mp3`);
+        const favoriteSongs = [...store.get(typings_1.KEYS_STORE.FAVORITE_SONGS)];
+        const findIndexSong = favoriteSongs.findIndex((song) => song === id);
+        if (findIndexSong <= -1)
+            return favoriteSongs;
+        const newArray = [
+            ...favoriteSongs.slice(0, findIndexSong),
+            ...favoriteSongs.slice(findIndexSong + 1),
+        ];
+        store.set("favoritesSongs", newArray);
+        win === null || win === void 0 ? void 0 : win.webContents.send("removeSong", name);
     }
     catch (error) {
         console.error("error", error);

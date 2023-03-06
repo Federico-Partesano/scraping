@@ -369,10 +369,10 @@ const Songs: FC<ISongs> = () => {
             <CustomButton
               label="CONFERMA"
               onClick={() => {
-                (window as any).api.send(
-                  "removeSong",
-                  selectedSongToRemove?.name
-                );
+                (window as any).api.send("removeSong", {
+                  name: selectedSongToRemove?.name,
+                  id: selectedSongToRemove?.tags?.id,
+                });
               }}
             />
           </ModalFooter>

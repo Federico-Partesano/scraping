@@ -1,3 +1,6 @@
+* {
+
+}
 svg {
   --rm-audio-player-sortable-list-button-active: #f9ab00 !important;
 }
@@ -50,7 +53,7 @@ svg {
 
     .unfavorite {
       path {
-        transition: fill .12s linear;
+        transition: fill 0.12s linear;
         fill: hsla(0, 0%, 100%, 0.7);
       }
       &:hover path {

@@ -12,7 +12,6 @@ const useYouTubeSearch = () => {
     (window as any).api.receive(
       "songs",
       (data: RespVideoSearch[] | "error") => {
-        console.log("🚀 ~ file: useYouTubeSearch.ts:20 ~ useEffect ~ data:", data)
         data !== "error" && setData(data);
         setLoading(false);
       }

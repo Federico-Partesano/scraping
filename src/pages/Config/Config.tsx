@@ -1,16 +1,18 @@
 import { Button, Container } from "@chakra-ui/react";
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { useSelector } from "react-redux";
 import CustomButton from "../../components/CustomButton/CustomButton";
 import { RootState } from "../../redux/reducers";
 import "./Config.scss";
+import { useNavigate } from "react-router-dom";
 
 interface IConfig {}
 
 const Config: FC<IConfig> = () => {
   const {
-    configuration: { folder },
+    configuration: { file },
   } = useSelector((st: RootState) => st.configuration);
+
   return (
     <div className="main__container config__container">
       <Container maxW={"container.xl"}>
@@ -30,13 +32,13 @@ const Config: FC<IConfig> = () => {
             alcune funzionalità sui file provenienti da fonti esterne.
           </p>
           <p className="folder my-4">
-            Cartella attuale: <span className="text-success">{folder}</span>
+            Cartella attuale: <span className="text-success">{file}</span>
           </p>
-          <div className="">
+          <div>
             <CustomButton
               label="CAMBIA"
               onClick={() => {
-                (window as any).api.send("setFolderSongs", "error");
+                (window as any).api.send("setFile");
               }}
             />
           </div>

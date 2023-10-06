@@ -5,39 +5,13 @@ import { contextBridge, ipcRenderer } from "electron";
 contextBridge.exposeInMainWorld("api", {
   send: (channel: any, data: any) => {
     // whitelist channels
-    let validChannels = [
-      "toMain",
-      "songs",
-      "getFolderSongs",
-      "setFolderSongs",
-      "downloadSong",
-      "getMP3Files",
-      "startAudioMp3",
-      "percentualDownload",
-      "getFavorites",
-      "addFavorite",
-      "deleteFavorite",
-      "removeSong",
-    ];
+    let validChannels = ["getFile", "setFile", "getDataFile"];
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data);
     }
   },
   receive: (channel: any, func: any) => {
-    let validChannels = [
-      "fromMain",
-      "songs",
-      "getFolderSongs",
-      "setFolderSongs",
-      "downloadSong",
-      "getMP3Files",
-      "startAudioMp3",
-      "percentualDownload",
-      "getFavorites",
-      "addFavorite",
-      "deleteFavorite",
-      "removeSong",
-    ];
+    let validChannels = ["getFile", "setFile", "getDataFile"];
     if (validChannels.includes(channel)) {
       // Deliberately strip event as it includes `sender`
       ipcRenderer.on(channel, (event, ...args) => func(...args));

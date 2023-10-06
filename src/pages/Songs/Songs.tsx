@@ -51,6 +51,7 @@ const Footer: FC<{ songs: Song[]; audioRef: any; selectedSong?: number }> = ({
   return (
     <div style={{ color: "white" }}>
       <AudioPlayer
+      rootContainerProps={{colorScheme: "dark"}}
         audioRef={audioRef}
         activeUI={{ all: true, progress: "waveform" }}
         playList={playList}
@@ -144,15 +145,15 @@ const Songs: FC<ISongs> = () => {
         if (favoriteSongs !== "error") setFavoritesId(favoriteSongs);
       }
     );
-    (window as any).api.receive("removeSong", (nameSong: string) => {
-      if (nameSong !== "error") {
-        setSongs((prev) => {
-          if (prev === "error" || !prev) return prev;
-          return prev.filter((song) => song.name !== nameSong);
-        });
-      }
-      onClose();
-    });
+    // (window as any).api.receive("removeSong", (nameSong: string) => {
+    //   if (nameSong !== "error") {
+    //     setSongs((prev) => {
+    //       if (prev === "error" || !prev) return prev;
+    //       return prev.filter((song) => song.name !== nameSong);
+    //     });
+    //   }
+    //   onClose();
+    // });
 
     (window as any).api.send("getFavorites");
     (window as any).api.send("getMP3Files");
@@ -373,6 +374,7 @@ const Songs: FC<ISongs> = () => {
                   name: selectedSongToRemove?.name,
                   id: selectedSongToRemove?.tags?.id,
                 });
+                onClose();
               }}
             />
           </ModalFooter>

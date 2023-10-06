@@ -4,11 +4,10 @@ import { BrowserRouter, MemoryRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import { ChakraProvider, extendTheme, ThemeConfig } from "@chakra-ui/react";
 import Header from "./components/Header/Header";
-import SingleVideo from "./pages/SingleVideo/SingleVideo";
 import Loader from "./components/Loader/Loader";
 import SelectFolder from "./pages/SelectFolder/SelectFolder";
 import { useDispatch } from "react-redux";
-import { setFolderConfiguration } from "./redux/reducers/configuration";
+import { setFileConfiguration, setUsers } from "./redux/reducers/configuration";
 import Songs from "./pages/Songs/Songs";
 import Config from "./pages/Config/Config";
 
@@ -23,34 +22,46 @@ const theme = extendTheme({ config });
 function App() {
   const dispatch = useDispatch();
   const [isReady, setIsReady] = useState(false);
-  const [selectedFolder, setSelectedFolder] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(false);
   useEffect(() => {
     (window as any).api.receive(
       "getFolderSongs",
-      (folder: string | undefined) => {
-        folder && setSelectedFolder(true);
-        folder && dispatch(setFolderConfiguration(folder));
+      (file: string | undefined) => {
+        file && setSelectedFile(true);
+        file && dispatch(setFileConfiguration(file));
         setIsReady(true);
       }
     );
-    (window as any).api.receive(
-      "setFolderSongs",
-      (folder: string | undefined) => {
-        if (folder) {
-          dispatch(setFolderConfiguration(folder));
-          setSelectedFolder(true);
-        }
+    (window as any).api.receive("getFile", (file: string | undefined) => {
+      console.log("🚀 ~ file: App.tsx:36 ~ file:", file);
+      if (file) {
+        dispatch(setFileConfiguration(file));
+        setSelectedFile(true);
       }
-    );
+      setIsReady(true);
+    });
+    (window as any).api.receive("setFile", (file: string | undefined) => {
+      console.log("🚀 ~ file: App.tsx:36 ~ file:", file);
+      if (file) {
+        dispatch(setFileConfiguration(file));
+        setSelectedFile(true);
+      }
+    });
+    (window as any).api.receive("getDataFile", (users: any) => {
+      if (users) {
+        dispatch(setUsers(users));
+      }
+    });
   }, []);
 
   useLayoutEffect(() => {
-    (window as any).api.send("getFolderSongs");
+    (window as any).api.send("getFile");
+    console.log("setFile");
   }, []);
 
   if (!isReady) return <Loader />;
 
-  if (!selectedFolder) return <SelectFolder />;
+  if (!selectedFile) return <Config />;
 
   return (
     <MemoryRouter>
@@ -60,9 +71,6 @@ function App() {
             <Route path="/" element={<Header />}>
               <Route path="home" element={<Home />} />
               <Route path="/" element={<Home />} />
-              <Route path="single-video" element={<SingleVideo />} />
-              <Route path="songs" element={<Songs />} />
-              <Route path="config" element={<Config />} />
             </Route>
           </Routes>
         </div>

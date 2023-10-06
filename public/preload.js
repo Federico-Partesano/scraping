@@ -6,39 +6,13 @@ const electron_1 = require("electron");
 electron_1.contextBridge.exposeInMainWorld("api", {
     send: (channel, data) => {
         // whitelist channels
-        let validChannels = [
-            "toMain",
-            "songs",
-            "getFolderSongs",
-            "setFolderSongs",
-            "downloadSong",
-            "getMP3Files",
-            "startAudioMp3",
-            "percentualDownload",
-            "getFavorites",
-            "addFavorite",
-            "deleteFavorite",
-            "removeSong",
-        ];
+        let validChannels = ["getFile", "setFile", "getDataFile"];
         if (validChannels.includes(channel)) {
             electron_1.ipcRenderer.send(channel, data);
         }
     },
     receive: (channel, func) => {
-        let validChannels = [
-            "fromMain",
-            "songs",
-            "getFolderSongs",
-            "setFolderSongs",
-            "downloadSong",
-            "getMP3Files",
-            "startAudioMp3",
-            "percentualDownload",
-            "getFavorites",
-            "addFavorite",
-            "deleteFavorite",
-            "removeSong",
-        ];
+        let validChannels = ["getFile", "setFile", "getDataFile"];
         if (validChannels.includes(channel)) {
             // Deliberately strip event as it includes `sender`
             electron_1.ipcRenderer.on(channel, (event, ...args) => func(...args));

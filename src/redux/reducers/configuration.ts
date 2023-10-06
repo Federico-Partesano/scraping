@@ -1,21 +1,40 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-
-interface ConfigurationState {
-  configuration: {folder: string | undefined}
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+export interface Data {
+  ID: number;
+  "Nome e Cognome ": string;
+  "E-mail": string;
+  Domicilio: string;
+  "Area Aziendale": string;
+  CV: string;
+  "Data Ultima Modifica": string;
+  "Data&nbsp;Colloquio": string;
+  "Data Inserimento Valutazione": string;
+  "Data Ultima&nbsp;Modifica  Valutazione": string;
 }
 
-const initialState = { configuration: {folder: undefined} } as ConfigurationState
+interface ConfigurationState {
+  configuration: { file: string | undefined; users: Data[] };
+}
+
+const initialState = {
+  configuration: { file: undefined, users: [] },
+} as ConfigurationState;
 
 const customersSlice = createSlice({
-  name: 'customers',
+  name: "customers",
   initialState,
   reducers: {
-
-    setFolderConfiguration(state: ConfigurationState, {payload}: PayloadAction<string>) {
-      state.configuration.folder = payload
+    setFileConfiguration(
+      state: ConfigurationState,
+      { payload }: PayloadAction<string>
+    ) {
+      state.configuration.file = payload;
+    },
+    setUsers(state: ConfigurationState, { payload }: PayloadAction<Data[]>) {
+      state.configuration.users = payload;
     },
   },
-})
+});
 
-export const { setFolderConfiguration } = customersSlice.actions
-export default customersSlice.reducer
+export const { setFileConfiguration, setUsers } = customersSlice.actions;
+export default customersSlice.reducer;

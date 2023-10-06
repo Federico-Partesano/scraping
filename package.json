@@ -2,11 +2,18 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
+  "type": "commonjs",
   "homepage": "./",
   "main": "build/main.js",
   "build": {
     "productName": "music-youtube",
     "appId": "music-youtube",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "logo.ico",
+      "package.json"
+    ],
     "extraMetadata": {
       "main": "build/main.js"
     },
@@ -14,6 +21,26 @@
       "icon": "logo.ico",
       "target": "nsis",
       "publish": false
+    },
+    "linux": {
+      "icon": "800x800.png"
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "logo-mac.ico"
+    }
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "osxNotarize": true
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-dmg",
+          "config": {}
+        }
+      ]
     }
   },
   "dependencies": {
@@ -21,13 +48,12 @@
     "@chakra-ui/react": "^2.2.1",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
-    "@ffmpeg-installer/ffmpeg": "^1.1.0",
-    "@ffmpeg/core": "^0.11.0",
-    "@ffmpeg/ffmpeg": "^0.11.6",
     "@reduxjs/toolkit": "^1.9.3",
+    "@tanstack/react-table": "^8.10.3",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
+    "@tanstack/match-sorter-utils": "8.7.6",
     "@types/jest": "^27.0.1",
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
@@ -36,36 +62,28 @@
     "axios": "^0.27.2",
     "body-parser": "^1.20.2",
     "bootstrap": "^5.1.3",
-    "chakra-player": "^1.1.10",
-    "cors": "^2.8.5",
     "dayjs": "^1.11.3",
     "downloadjs": "^1.4.7",
+    "electron": "^26.2.4",
     "electron-store": "^8.1.0",
-    "express": "^4.18.2",
-    "firebase": "^9.9.0",
-    "fluent-ffmpeg": "^2.1.2",
     "framer-motion": "^6.4.3",
     "http": "^0.0.1-security",
     "node-id3": "^0.2.6",
     "react": "^18.2.0",
-    "react-audio-player": "^0.17.0",
     "react-bootstrap": "^2.4.0",
     "react-dom": "^18.2.0",
     "react-modern-audio-player": "^1.4.0-rc.2",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
+    "react-virtual": "^2.10.4",
     "sass": "^1.53.0",
-    "socket.io": "^4.6.1",
-    "socket.io-client": "^4.4.1",
     "typescript": "^4.4.2",
     "uuid": "^9.0.0",
-    "web-vitals": "^2.1.0",
-    "youtube-search-api": "^1.1.1",
-    "youtube-search-without-api-key": "^1.1.0",
-    "ytdl-core": "^4.11.2"
+    "web-vitals": "^2.1.0"
   },
   "scripts": {
+    "package-mac": "rm -rf ./node_modules && yarn build && electron-builder build --mac",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -95,10 +113,11 @@
     ]
   },
   "devDependencies": {
+    "@electron-forge/cli": "^6.0.5",
     "@types/fluent-ffmpeg": "^2.1.21",
     "@types/uuid": "^9.0.1",
     "concurrently": "^7.2.2",
-    "electron": "^19.0.8",
+    "electron-packager": "^17.1.1",
     "wait-on": "^6.0.1"
   }
 }

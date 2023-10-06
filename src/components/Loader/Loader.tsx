@@ -39,7 +39,7 @@ const Loader: FC<ILoader> = ({ label, valueProgressBar, isIndeterminateProgressB
               value={valueProgressBar}
             />
           )}
-          {label && <span className="description">{label}</span>}
+          {label && <p className="description">{label}</p>}
         </div>
       </div>
     </div>

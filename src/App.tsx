@@ -6,10 +6,12 @@ import { ChakraProvider, extendTheme, ThemeConfig } from "@chakra-ui/react";
 import Header from "./components/Header/Header";
 import Loader from "./components/Loader/Loader";
 import SelectFolder from "./pages/SelectFolder/SelectFolder";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setFileConfiguration, setUsers } from "./redux/reducers/configuration";
 import Songs from "./pages/Songs/Songs";
 import Config from "./pages/Config/Config";
+import { RootState } from "./redux/reducers";
+import Login from "./pages/Login/Login";
 
 const config: ThemeConfig = {
   initialColorMode: "dark",
@@ -21,6 +23,7 @@ const theme = extendTheme({ config });
 
 function App() {
   const dispatch = useDispatch();
+  const {sessionId} = useSelector((st: RootState) => st.configuration.configuration)
   const [isReady, setIsReady] = useState(false);
   const [selectedFile, setSelectedFile] = useState(false);
   useEffect(() => {
@@ -62,13 +65,15 @@ function App() {
   if (!isReady) return <Loader />;
 
   if (!selectedFile) return <Config />;
-
+  if (!sessionId) return <Login />;
+  
   return (
     <MemoryRouter>
       <ChakraProvider theme={theme}>
         <div className="App">
           <Routes>
             <Route path="/" element={<Header />}>
+              <Route path="home" element={<Home />} />
               <Route path="home" element={<Home />} />
               <Route path="/" element={<Home />} />
             </Route>

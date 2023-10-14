@@ -24,7 +24,7 @@ import {
 import "./Home.scss";
 import { Data } from "../../redux/reducers/configuration";
 import { useVirtual } from "react-virtual";
-import {
+ import {
   RankingInfo,
   rankItem,
   compareItems,
